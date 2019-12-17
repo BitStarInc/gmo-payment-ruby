@@ -21,7 +21,7 @@ module GMO
       def initialize(options = {})
         @host = options[:host]
       end
-      attr_reader :host
+      attr_reader :host, :status, :body
 
       def api(path, args = {}, verb = "post", options = {}, &error_checking_block)
         # Setup args for make_request
@@ -29,6 +29,8 @@ module GMO
         options.merge!({ :host => @host })
         # Make request via the provided service
         result = GMO.make_request path, args, verb, options
+        @body = result.body
+        @status = result.status.to_i
         # Check for any 500 server errors before parsing the body
         if result.status >= 500
           error_detail = {
